@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import PopularImages from "../components/PopularImages";
-import GalleryImage from "../components/GalleryImage";
+import SearchedImages from "../components/SearchedImages";
 
 export type ImageType = {
   id: string;
@@ -15,7 +15,7 @@ export type ImageType = {
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [queryImages, setQueryImages] = useState<ImageType[]>([]);
+  const [searchedImages, setSearchedImages] = useState<ImageType[]>([]);
 
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -35,8 +35,8 @@ const Home = () => {
           },
         }
       );
-      setQueryImages(response.data.results);
-      console.log("data fetched");
+      setSearchedImages(response.data.results);
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching popular images:", error);
     }
@@ -54,9 +54,7 @@ const Home = () => {
       />
       <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {searchQuery ? (
-          queryImages.map((image) => (
-            <GalleryImage key={image.id} image={image} />
-          ))
+          <SearchedImages searchedImages={searchedImages} />
         ) : (
           <PopularImages />
         )}
