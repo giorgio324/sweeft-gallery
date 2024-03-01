@@ -4,7 +4,7 @@ import Modal from "./Modal";
 type ImageProps = {
   image: ImageType;
 };
-const Image = ({ image }: ImageProps) => {
+const GalleryImage = ({ image }: ImageProps) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -18,4 +18,4 @@ const Image = ({ image }: ImageProps) => {
     </>
   );
 };
-export default Image;
+export default GalleryImage;
