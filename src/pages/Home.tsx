@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import PopularImages from "../components/PopularImages";
 import SearchedImages from "../components/SearchedImages";
+import { useImagesContext } from "../context/ImagesContext";
 
 export type ImageType = {
   id: string;
@@ -16,7 +17,7 @@ export type ImageType = {
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedImages, setSearchedImages] = useState<ImageType[]>([]);
-
+  const { cache, setCache, page, setPage } = useImagesContext();
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setSearchQuery(inputValue);
@@ -30,13 +31,22 @@ const Home = () => {
           params: {
             client_id: import.meta.env.VITE_UNSPLASH_API_KEY,
             query: inputValue,
-            page: 1,
+            page: page,
             per_page: 20,
           },
         }
       );
       setSearchedImages(response.data.results);
       console.log(response.data);
+      if (page === 1) {
+        setCache((prevState) => {
+          return {
+            ...prevState,
+            [inputValue]: response.data.results,
+          };
+        });
+      }
+      console.log(cache);
     } catch (error) {
       console.error("Error fetching popular images:", error);
     }
