@@ -1,8 +1,7 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import PopularImages from "../components/PopularImages";
 import SearchedImages from "../components/SearchedImages";
-import { useInfiniteQueryFetch } from "../hooks/useInfiniteQueryFetch";
 
 export type ImageType = {
   id: string;
@@ -22,20 +21,16 @@ const PAGE_SIZE = 20;
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  //const [loading, setIsLoading] = useState(false);
+  const [loading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  //const [searchedImages, setSearchedImages] = useState<ImageType[]>([]);
-  //const [totalPages, setTotalPages] = useState<number>(1);
+  const [searchedImages, setSearchedImages] = useState<ImageType[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const observer = useRef<IntersectionObserver | null>(null);
-  const { data, loading, error, totalPages } = useInfiniteQueryFetch(
-    "https://api.unsplash.com/search/photos",
-    20,
-    searchQuery,
-    page
-  );
+
   const lastImage = useCallback(
     (node: any) => {
-      if (!node || loading) return;
+      if (!node || loading || error) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && totalPages > page) {
@@ -48,7 +43,7 @@ const Home = () => {
     [loading, totalPages]
   );
 
-  /* useEffect(() => {
+  useEffect(() => {
     const fetchImages = async () => {
       if (!searchQuery) return;
       setIsLoading(true);
@@ -76,13 +71,16 @@ const Home = () => {
         console.log(response.data);
       } catch (error) {
         console.error("Error fetching images:", error);
+        if (axios.isAxiosError(error)) {
+          setError(error.response?.data);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchImages();
-  }, [searchQuery, page]); */
+  }, [searchQuery, page]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -96,19 +94,25 @@ const Home = () => {
 
   return (
     <>
-      <input
-        type="text"
-        name="search"
-        id="search"
-        value={searchQuery}
-        onChange={handleInputChange}
-        className="p-2 border"
-        placeholder="Search"
-      />
+      <div className="flex justify-center items-center my-8">
+        <input
+          type="text"
+          name="search"
+          id="search"
+          value={searchQuery}
+          onChange={handleInputChange}
+          className="p-2 border w-[300px]"
+          placeholder="Search"
+        />
+      </div>
+
       <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {searchQuery ? (
           <>
-            <SearchedImages searchedImages={data} lastImageRef={lastImage} />
+            <SearchedImages
+              searchedImages={searchedImages}
+              lastImageRef={lastImage}
+            />
             {loading && <div>loading...</div>}
           </>
         ) : (

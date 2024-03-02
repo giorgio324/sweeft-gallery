@@ -13,7 +13,7 @@ const GalleryImage = ({ image, lastImageRef }: ImageProps) => {
         onClick={() => setIsOpen(true)}
         src={image.urls.regular}
         alt={image.alt_description}
-        className="object-cover w-full h-full"
+        className="object-cover w-[320px] h-[320px]"
         ref={lastImageRef}
       />
       <Modal isOpen={isOpen} image={image.urls.small} setIsOpen={setIsOpen} />
