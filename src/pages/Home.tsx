@@ -1,31 +1,17 @@
-import axios, { AxiosError } from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import PopularImages from "../components/PopularImages";
 import SearchedImages from "../components/SearchedImages";
-
-export type ImageType = {
-  id: string;
-  urls: {
-    regular: string;
-    small: string;
-    full: string;
-  };
-  alt_description: string;
-};
-export type SearchedImageType = {
-  results: ImageType[];
-  total: number;
-  total_pages: number;
-};
-const PAGE_SIZE = 20;
-
+import { useInfiniteQueryFetch } from "../hooks/useInfiniteQueryFetch";
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const [searchedImages, setSearchedImages] = useState<ImageType[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(1);
+  const { data, error, loading, totalPages } = useInfiniteQueryFetch(
+    "https://api.unsplash.com/search/photos",
+    20,
+    searchQuery,
+    page
+  );
+
   const observer = useRef<IntersectionObserver | null>(null);
 
   const lastImage = useCallback(
@@ -42,45 +28,6 @@ const Home = () => {
     },
     [loading, totalPages]
   );
-
-  useEffect(() => {
-    const fetchImages = async () => {
-      if (!searchQuery) return;
-      setIsLoading(true);
-      try {
-        const response = await axios.get<SearchedImageType>(
-          "https://api.unsplash.com/search/photos",
-          {
-            params: {
-              client_id: import.meta.env.VITE_UNSPLASH_API_KEY,
-              query: searchQuery,
-              page: page,
-              per_page: PAGE_SIZE,
-            },
-          }
-        );
-        if (page === 1) {
-          setSearchedImages(response.data.results);
-          setTotalPages(response.data.total_pages);
-        } else {
-          setSearchedImages((prevImages) => [
-            ...prevImages,
-            ...response.data.results,
-          ]);
-        }
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching images:", error);
-        if (axios.isAxiosError(error)) {
-          setError(error.response?.data);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchImages();
-  }, [searchQuery, page]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -106,14 +53,12 @@ const Home = () => {
         />
       </div>
 
-      <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {searchQuery ? (
           <>
-            <SearchedImages
-              searchedImages={searchedImages}
-              lastImageRef={lastImage}
-            />
+            <SearchedImages searchedImages={data} lastImageRef={lastImage} />
             {loading && <div>loading...</div>}
+            {error && <div>{error}</div>}
           </>
         ) : (
           <PopularImages />

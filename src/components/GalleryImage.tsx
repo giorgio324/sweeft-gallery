@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ImageType } from "../pages/Home";
 import Modal from "./Modal";
+import { ImageType } from "../hooks/useInfiniteQueryFetch";
 type ImageProps = {
   image: ImageType;
   lastImageRef?: (node: HTMLImageElement | null) => void;

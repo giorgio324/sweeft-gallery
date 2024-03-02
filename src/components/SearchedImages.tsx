@@ -1,4 +1,4 @@
-import { ImageType } from "../pages/Home";
+import { ImageType } from "../hooks/useInfiniteQueryFetch";
 import GalleryImage from "./GalleryImage";
 
 const SearchedImages = ({

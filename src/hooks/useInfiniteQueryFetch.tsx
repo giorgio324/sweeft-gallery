@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
-type ImageType = {
+export type ImageType = {
   id: string;
   urls: {
     regular: string;
@@ -29,7 +29,7 @@ export const useInfiniteQueryFetch = (
 
   useEffect(() => {
     const fetchData = async () => {
-      if (loading || page > totalPages || !query) return;
+      if (!query) return;
       setLoading(true);
       try {
         const response = await axios.get<SearchedImageType>(url, {
@@ -40,8 +40,12 @@ export const useInfiniteQueryFetch = (
             client_id: import.meta.env.VITE_UNSPLASH_API_KEY,
           },
         });
-        setData((prevData) => [...prevData, ...response.data.results]);
-        setTotalPages(response.data.total_pages);
+        if (page === 1) {
+          setData(response.data.results);
+          setTotalPages(response.data.total_pages);
+        } else {
+          setData((prevImages) => [...prevImages, ...response.data.results]);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         if (error instanceof Error) {
