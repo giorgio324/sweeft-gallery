@@ -16,12 +16,16 @@ export type SearchedImageType = {
   total: number;
   total_pages: number;
 };
+
 export const useInfiniteQueryFetch = (
   url: string,
   per_page = 20,
   query: string,
   page: number
 ) => {
+  const [cache, setCache] = useState<{
+    [key: string]: { results: ImageType[]; totalPages: number };
+  }>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ImageType[]>([]);
@@ -32,19 +36,33 @@ export const useInfiniteQueryFetch = (
       if (!query) return;
       setLoading(true);
       try {
-        const response = await axios.get<SearchedImageType>(url, {
-          params: {
-            per_page,
-            query,
-            page,
-            client_id: import.meta.env.VITE_UNSPLASH_API_KEY,
-          },
-        });
-        if (page === 1) {
-          setData(response.data.results);
-          setTotalPages(response.data.total_pages);
+        // Check if the data is cached
+        if (page === 1 && cache[query]) {
+          setData(cache[query].results);
+          setTotalPages(cache[query].totalPages);
         } else {
-          setData((prevImages) => [...prevImages, ...response.data.results]);
+          const response = await axios.get<SearchedImageType>(url, {
+            params: {
+              per_page,
+              query,
+              page,
+              client_id: import.meta.env.VITE_UNSPLASH_API_KEY,
+            },
+          });
+          if (page === 1) {
+            setData(response.data.results);
+            setTotalPages(response.data.total_pages);
+            // Cache the first page data
+            setCache((prevCache) => ({
+              ...prevCache,
+              [query]: {
+                results: response.data.results,
+                totalPages: response.data.total_pages,
+              },
+            }));
+          } else {
+            setData((prevImages) => [...prevImages, ...response.data.results]);
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -55,9 +73,9 @@ export const useInfiniteQueryFetch = (
         setLoading(false);
       }
     };
-
+    console.log(totalPages);
     fetchData();
   }, [query, page]);
 
-  return { loading, data, error, totalPages };
+  return { loading, data, error, totalPages, cache };
 };
