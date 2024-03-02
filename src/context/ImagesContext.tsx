@@ -6,7 +6,7 @@ import {
   useContext,
   useState,
 } from "react";
-import { ImageType } from "../pages/Home";
+import { ImageType } from "../hooks/useInfiniteQueryFetch";
 
 type ImagesContextType = {
   cache: { key: string; value: ImageType[] } | null;
