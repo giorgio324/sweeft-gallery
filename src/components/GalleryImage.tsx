@@ -3,8 +3,9 @@ import { ImageType } from "../pages/Home";
 import Modal from "./Modal";
 type ImageProps = {
   image: ImageType;
+  index: number;
 };
-const GalleryImage = ({ image }: ImageProps) => {
+const GalleryImage = ({ image, index }: ImageProps) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>

@@ -8,8 +8,8 @@ const SearchedImages = ({
 }) => {
   return (
     <>
-      {searchedImages.map((image) => (
-        <GalleryImage key={image.id} image={image} />
+      {searchedImages.map((image, index) => (
+        <GalleryImage key={image.id} image={image} index={index} />
       ))}
     </>
   );

@@ -1,8 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PopularImages from "../components/PopularImages";
 import SearchedImages from "../components/SearchedImages";
-import { useImagesContext } from "../context/ImagesContext";
 
 export type ImageType = {
   id: string;
@@ -13,44 +12,60 @@ export type ImageType = {
   };
   alt_description: string;
 };
+export type SearchedImageType = {
+  results: ImageType[];
+  total: number;
+  total_pages: number;
+};
+const PAGE_SIZE = 20;
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
   const [searchedImages, setSearchedImages] = useState<ImageType[]>([]);
-  const { cache, setCache, page, setPage } = useImagesContext();
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [totalPages, setTotalPages] = useState<number | null>(null);
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (!searchQuery) return;
+      try {
+        const response = await axios.get<SearchedImageType>(
+          "https://api.unsplash.com/search/photos",
+          {
+            params: {
+              client_id: import.meta.env.VITE_UNSPLASH_API_KEY,
+              query: searchQuery,
+              page: page,
+              per_page: PAGE_SIZE,
+            },
+          }
+        );
+        if (page === 1) {
+          setSearchedImages(response.data.results);
+        } else {
+          setSearchedImages((prevImages) => [
+            ...prevImages,
+            ...response.data.results,
+          ]);
+        }
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    fetchImages();
+  }, [searchQuery, page]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     setSearchQuery(inputValue);
-
-    if (!inputValue) return;
-
-    try {
-      const response = await axios.get(
-        "https://api.unsplash.com/search/photos",
-        {
-          params: {
-            client_id: import.meta.env.VITE_UNSPLASH_API_KEY,
-            query: inputValue,
-            page: page,
-            per_page: 20,
-          },
-        }
-      );
-      setSearchedImages(response.data.results);
-      console.log(response.data);
-      if (page === 1) {
-        setCache((prevState) => {
-          return {
-            ...prevState,
-            [inputValue]: response.data.results,
-          };
-        });
-      }
-      console.log(cache);
-    } catch (error) {
-      console.error("Error fetching popular images:", error);
-    }
+    setPage(1);
   };
+
+  const loadMoreImages = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
   return (
     <>
       <input
@@ -60,7 +75,7 @@ const Home = () => {
         value={searchQuery}
         onChange={handleInputChange}
         className="p-2 border"
-        placeholder="search"
+        placeholder="Search"
       />
       <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {searchQuery ? (
@@ -69,7 +84,16 @@ const Home = () => {
           <PopularImages />
         )}
       </main>
+      {searchQuery && (
+        <button
+          onClick={loadMoreImages}
+          className="mt-4 p-2 bg-blue-500 text-white rounded"
+        >
+          Load More
+        </button>
+      )}
     </>
   );
 };
+
 export default Home;
