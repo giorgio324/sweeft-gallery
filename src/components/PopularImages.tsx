@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ImageType } from "../pages/Home";
+import { ImageType } from "../hooks/useInfiniteQueryFetch";
 import axios from "axios";
 import GalleryImage from "./GalleryImage";
 
