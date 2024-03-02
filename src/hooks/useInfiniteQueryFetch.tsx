@@ -25,7 +25,10 @@ export const useInfiniteQueryFetch = (
 ) => {
   const [cache, setCache] = useState<{
     [key: string]: { results: ImageType[]; totalPages: number };
-  }>({});
+  }>(() => {
+    const cachedData = localStorage.getItem("imageCache");
+    return cachedData ? JSON.parse(cachedData) : {};
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ImageType[]>([]);
@@ -60,6 +63,7 @@ export const useInfiniteQueryFetch = (
                 totalPages: response.data.total_pages,
               },
             }));
+            localStorage.setItem("imageCache", JSON.stringify(cache));
           } else {
             setData((prevImages) => [...prevImages, ...response.data.results]);
           }
