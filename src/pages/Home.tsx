@@ -2,6 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import PopularImages from "../components/PopularImages";
 import SearchedImages from "../components/SearchedImages";
+import { useInfiniteQueryFetch } from "../hooks/useInfiniteQueryFetch";
 
 export type ImageType = {
   id: string;
@@ -21,12 +22,17 @@ const PAGE_SIZE = 20;
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setIsLoading] = useState(false);
+  //const [loading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [searchedImages, setSearchedImages] = useState<ImageType[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(1);
+  //const [searchedImages, setSearchedImages] = useState<ImageType[]>([]);
+  //const [totalPages, setTotalPages] = useState<number>(1);
   const observer = useRef<IntersectionObserver | null>(null);
-
+  const { data, loading, error, totalPages } = useInfiniteQueryFetch(
+    "https://api.unsplash.com/search/photos",
+    20,
+    searchQuery,
+    page
+  );
   const lastImage = useCallback(
     (node: any) => {
       if (!node || loading) return;
@@ -34,14 +40,15 @@ const Home = () => {
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && totalPages > page) {
           loadMoreImages();
+          console.log("last");
         }
       });
       observer.current.observe(node);
     },
-    [loading, totalPages, page]
+    [loading, totalPages]
   );
 
-  useEffect(() => {
+  /* useEffect(() => {
     const fetchImages = async () => {
       if (!searchQuery) return;
       setIsLoading(true);
@@ -75,7 +82,7 @@ const Home = () => {
     };
 
     fetchImages();
-  }, [searchQuery, page]);
+  }, [searchQuery, page]); */
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -101,11 +108,7 @@ const Home = () => {
       <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {searchQuery ? (
           <>
-            <SearchedImages
-              loading={loading}
-              searchedImages={searchedImages}
-              lastImageRef={lastImage}
-            />
+            <SearchedImages searchedImages={data} lastImageRef={lastImage} />
             {loading && <div>loading...</div>}
           </>
         ) : (

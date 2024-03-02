@@ -7,7 +7,6 @@ const SearchedImages = ({
 }: {
   searchedImages: ImageType[];
   lastImageRef: (node: HTMLImageElement | null) => void;
-  loading: boolean;
 }) => {
   return (
     <>
