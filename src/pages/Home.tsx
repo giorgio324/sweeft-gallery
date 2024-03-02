@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import PopularImages from "../components/PopularImages";
 import SearchedImages from "../components/SearchedImages";
 
@@ -21,12 +21,30 @@ const PAGE_SIZE = 20;
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [searchedImages, setSearchedImages] = useState<ImageType[]>([]);
-  const [totalPages, setTotalPages] = useState<number | null>(null);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const lastImage = useCallback(
+    (node: any) => {
+      if (!node || loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && totalPages > page) {
+          loadMoreImages();
+        }
+      });
+      observer.current.observe(node);
+    },
+    [loading, totalPages, page]
+  );
+
   useEffect(() => {
     const fetchImages = async () => {
       if (!searchQuery) return;
+      setIsLoading(true);
       try {
         const response = await axios.get<SearchedImageType>(
           "https://api.unsplash.com/search/photos",
@@ -41,6 +59,7 @@ const Home = () => {
         );
         if (page === 1) {
           setSearchedImages(response.data.results);
+          setTotalPages(response.data.total_pages);
         } else {
           setSearchedImages((prevImages) => [
             ...prevImages,
@@ -50,6 +69,8 @@ const Home = () => {
         console.log(response.data);
       } catch (error) {
         console.error("Error fetching images:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -79,19 +100,18 @@ const Home = () => {
       />
       <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {searchQuery ? (
-          <SearchedImages searchedImages={searchedImages} />
+          <>
+            <SearchedImages
+              loading={loading}
+              searchedImages={searchedImages}
+              lastImageRef={lastImage}
+            />
+            {loading && <div>loading...</div>}
+          </>
         ) : (
           <PopularImages />
         )}
       </main>
-      {searchQuery && (
-        <button
-          onClick={loadMoreImages}
-          className="mt-4 p-2 bg-blue-500 text-white rounded"
-        >
-          Load More
-        </button>
-      )}
     </>
   );
 };

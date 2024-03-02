@@ -3,9 +3,9 @@ import { ImageType } from "../pages/Home";
 import Modal from "./Modal";
 type ImageProps = {
   image: ImageType;
-  index: number;
+  lastImageRef?: (node: HTMLImageElement | null) => void;
 };
-const GalleryImage = ({ image, index }: ImageProps) => {
+const GalleryImage = ({ image, lastImageRef }: ImageProps) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -14,6 +14,7 @@ const GalleryImage = ({ image, index }: ImageProps) => {
         src={image.urls.regular}
         alt={image.alt_description}
         className="object-cover w-full h-full"
+        ref={lastImageRef}
       />
       <Modal isOpen={isOpen} image={image.urls.small} setIsOpen={setIsOpen} />
     </>
