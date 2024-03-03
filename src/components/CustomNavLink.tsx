@@ -9,8 +9,8 @@ const CustomNavLink = ({ to, children }: CustomNavLinkType) => {
       to={to}
       className={({ isActive }) =>
         isActive
-          ? "p-2 rounded-md transition-all duration-300 hover:bg-[#EEE5E9] text-lg font-bold"
-          : "p-2 rounded-md transition-all duration-300 hover:bg-[#CECECE] text-lg"
+          ? "p-2 rounded-sm transition-all duration-300 hover:bg-gray-300 md:text-xl font-bold"
+          : "p-2 rounded-sm transition-all duration-300 hover:bg-gray-300 md:text-xl"
       }
     >
       {children}
