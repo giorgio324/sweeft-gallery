@@ -27,6 +27,12 @@ const Home = () => {
   return (
     <>
       <SearchInput value={searchQuery} handleInputChange={handleInputChange} />
+      {!searchQuery && (
+        <div className="flex flex-col justify-center items-center my-4">
+          <h2 className="font-semibold text-xl">20 most popular images</h2>
+          <p className="text-lg">type in search to find more</p>
+        </div>
+      )}
       <main className="grid place-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
         {searchQuery ? (
           <>

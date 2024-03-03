@@ -88,23 +88,23 @@ const Modal = ({ setIsOpen, isOpen, image }: ModalProps) => {
             <img
               src={image.urls.full}
               alt={image.alt_description}
-              className="max-w-[300px] md:max-w-[700px] max-h-[380px] md:max-h-[500px] object-cover"
+              className="max-w-[285px] md:max-w-[700px] max-h-[380px] md:max-h-[500px] object-cover"
             />
             <div className="flex justify-between">
               <Stats
-                icon={<FaEye size={20} />}
+                icon={<FaEye className="md:text-[20px]" />}
                 value={imageStats?.views?.total}
                 loading={loading}
                 error={error}
               />
               <Stats
-                icon={<IoMdDownload size={20} />}
+                icon={<IoMdDownload className="md:text-[20px]" />}
                 value={imageStats?.downloads?.total}
                 loading={loading}
                 error={error}
               />
               <Stats
-                icon={<FaThumbsUp size={20} />}
+                icon={<FaThumbsUp className="md:text-[20px]" />}
                 value={imageStats?.likes?.total}
                 loading={loading}
                 error={error}
