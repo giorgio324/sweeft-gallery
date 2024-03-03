@@ -33,6 +33,10 @@ export const useInfiniteQueryFetch = (
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ImageType[]>([]);
   const [totalPages, setTotalPages] = useState<number>(1);
+  useEffect(() => {
+    localStorage.setItem("imageCache", JSON.stringify(cache));
+    console.log("value cached");
+  }, [cache]);
 
   useEffect(() => {
     const fetchData = async () => {
