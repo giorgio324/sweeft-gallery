@@ -95,16 +95,19 @@ const Modal = ({ setIsOpen, isOpen, image }: ModalProps) => {
                 icon={<FaEye size={20} />}
                 value={imageStats?.views?.total}
                 loading={loading}
+                error={error}
               />
               <Stats
                 icon={<IoMdDownload size={20} />}
                 value={imageStats?.downloads?.total}
                 loading={loading}
+                error={error}
               />
               <Stats
                 icon={<FaThumbsUp size={20} />}
                 value={imageStats?.likes?.total}
                 loading={loading}
+                error={error}
               />
             </div>
           </div>
