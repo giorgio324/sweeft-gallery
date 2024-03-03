@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { ImageType } from "../hooks/useInfiniteQueryFetch";
 
 type ModalProps = {
   isOpen: boolean;
   setIsOpen: (state: boolean) => void;
-  image: string;
+  image: ImageType;
 };
 const Modal = ({ setIsOpen, isOpen, image }: ModalProps) => {
   useEffect(() => {
@@ -28,8 +29,12 @@ const Modal = ({ setIsOpen, isOpen, image }: ModalProps) => {
             >
               overlay
             </div>
-            <div className="bg-slate-100 z-20 p-6 shadow-md flex flex-col rounded-lg">
-              <img src={image} alt="" />
+            <div className="bg-slate-100 z-20 p-4 shadow-md flex flex-col rounded-lg">
+              <img
+                src={image.urls.full}
+                alt={image.alt_description}
+                className="h-[600px]"
+              />
             </div>
           </div>,
           document.body

@@ -16,7 +16,7 @@ const GalleryImage = ({ image, lastImageRef }: ImageProps) => {
         className="object-cover w-[320px] h-[320px]"
         ref={lastImageRef}
       />
-      <Modal isOpen={isOpen} image={image.urls.small} setIsOpen={setIsOpen} />
+      <Modal isOpen={isOpen} image={image} setIsOpen={setIsOpen} />
     </>
   );
 };
