@@ -35,7 +35,6 @@ export const useInfiniteQueryFetch = (
   const [totalPages, setTotalPages] = useState<number>(1);
   useEffect(() => {
     localStorage.setItem("imageCache", JSON.stringify(cache));
-    console.log("value cached");
   }, [cache]);
 
   useEffect(() => {
@@ -81,7 +80,6 @@ export const useInfiniteQueryFetch = (
         setLoading(false);
       }
     };
-    console.log(totalPages);
     fetchData();
   }, [query, page]);
 

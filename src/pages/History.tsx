@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
 import { useInfiniteQueryFetch } from "../hooks/useInfiniteQueryFetch";
 import SearchedImages from "../components/SearchedImages";
 
@@ -15,22 +15,6 @@ const History = () => {
     setSearchQuery(query);
     setPage(1);
   };
-  const observer = useRef<IntersectionObserver | null>(null);
-
-  const lastImage = useCallback(
-    (node: any) => {
-      if (!node || loading || error) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && totalPages > page) {
-          loadMoreImages();
-          console.log("last");
-        }
-      });
-      observer.current.observe(node);
-    },
-    [loading, totalPages]
-  );
   const loadMoreImages = () => {
     setPage((prevPage) => prevPage + 1);
   };
@@ -48,7 +32,14 @@ const History = () => {
       <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {searchQuery && (
           <>
-            <SearchedImages searchedImages={data} lastImageRef={lastImage} />
+            <SearchedImages
+              searchedImages={data}
+              loading={loading}
+              error={error}
+              loadMoreImages={loadMoreImages}
+              page={page}
+              totalPages={totalPages}
+            />
             {loading && <div>loading...</div>}
             {error && <div>{error}</div>}
           </>

@@ -1,13 +1,40 @@
+import { useCallback, useRef } from "react";
 import { ImageType } from "../hooks/useInfiniteQueryFetch";
 import GalleryImage from "./GalleryImage";
 
-const SearchedImages = ({
-  searchedImages,
-  lastImageRef,
-}: {
+type SearchedImagesProps = {
   searchedImages: ImageType[];
-  lastImageRef: (node: HTMLImageElement | null) => void;
-}) => {
+  loading: boolean;
+  error: string | null;
+  totalPages: number;
+  page: number;
+  loadMoreImages: () => void;
+};
+
+const SearchedImages = ({
+  loading,
+  error,
+  totalPages,
+  searchedImages,
+  page,
+  loadMoreImages,
+}: SearchedImagesProps) => {
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const lastImage = useCallback(
+    (node: any) => {
+      if (!node || loading || error) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && totalPages > page) {
+          loadMoreImages();
+        }
+      });
+      observer.current.observe(node);
+    },
+    [loading, totalPages]
+  );
+
   return (
     <>
       {searchedImages.map((image, index) => {
@@ -16,7 +43,7 @@ const SearchedImages = ({
             <GalleryImage
               key={image.id}
               image={image}
-              lastImageRef={lastImageRef}
+              lastImageRef={lastImage}
             />
           );
         } else {

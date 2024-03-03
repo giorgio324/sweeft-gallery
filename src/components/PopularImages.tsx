@@ -17,7 +17,6 @@ const PopularImages = () => {
           },
         });
         setPopularImages(response.data);
-        console.log("data fetched");
       } catch (error) {
         console.error("Error fetching popular images:", error);
       }
