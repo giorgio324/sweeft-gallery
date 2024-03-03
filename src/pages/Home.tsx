@@ -3,6 +3,7 @@ import PopularImages from "../components/PopularImages";
 import SearchedImages from "../components/SearchedImages";
 import { useInfiniteQueryFetch } from "../hooks/useInfiniteQueryFetch";
 import SearchInput from "../components/SearchInput";
+import Loading from "../components/Loading";
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -37,7 +38,7 @@ const Home = () => {
               page={page}
               totalPages={totalPages}
             />
-            {loading && <div>loading...</div>}
+            {loading && <Loading />}
             {error && <div>{error}</div>}
           </>
         ) : (

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useInfiniteQueryFetch } from "../hooks/useInfiniteQueryFetch";
 import SearchedImages from "../components/SearchedImages";
+import Loading from "../components/Loading";
 
 const History = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,7 +34,7 @@ const History = () => {
         ) : (
           Object.keys(cache).map((key) => (
             <button
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg  px-5 py-2.5  mb-2"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 mb-2"
               key={key}
               onClick={() => changeSearchQuery(key)}
             >
@@ -53,7 +54,7 @@ const History = () => {
               page={page}
               totalPages={totalPages}
             />
-            {loading && <div>loading...</div>}
+            {loading && <Loading />}
             {error && <div>{error}</div>}
           </>
         )}

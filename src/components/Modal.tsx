@@ -4,6 +4,7 @@ import { ImageType } from "../hooks/useInfiniteQueryFetch";
 import axios from "axios";
 import { FaEye, FaThumbsUp } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
+import { IoClose } from "react-icons/io5";
 import Stats from "./Stats";
 type ModalProps = {
   isOpen: boolean;
@@ -66,31 +67,44 @@ const Modal = ({ setIsOpen, isOpen, image }: ModalProps) => {
   return (
     <>
       {createPortal(
-        <div className="flex justify-center items-center w-full fixed inset-0">
+        <div className="flex justify-center items-center w-full fixed inset-0 p-4">
           <div
-            className="w-full h-full bg-black opacity-50 absolute inset-0 z-10"
+            className="w-full h-full bg-black opacity-50 absolute inset-0 z-10 cursor-pointer"
             onClick={() => setIsOpen(false)}
           >
             overlay
           </div>
-          <div className="bg-slate-100 z-20 p-4 shadow-md flex flex-col rounded-lg">
+          <div className="bg-slate-100 z-20 p-3 shadow-md flex flex-col rounded-lg relative">
+            <button
+              className="absolute right-5 top-5"
+              onClick={() => setIsOpen(false)}
+            >
+              <IoClose
+                size={22}
+                color="black"
+                className="border border-black rounded-md"
+              />
+            </button>
             <img
               src={image.urls.full}
               alt={image.alt_description}
-              className="h-[600px]"
+              className="max-w-[300px] md:max-w-[700px] max-h-[380px] md:max-h-[500px] object-cover"
             />
             <div className="flex justify-between">
               <Stats
-                icon={<FaEye size={32} />}
+                icon={<FaEye size={20} />}
                 value={imageStats?.views?.total}
+                loading={loading}
               />
               <Stats
-                icon={<IoMdDownload size={32} />}
+                icon={<IoMdDownload size={20} />}
                 value={imageStats?.downloads?.total}
+                loading={loading}
               />
               <Stats
-                icon={<FaThumbsUp size={32} />}
+                icon={<FaThumbsUp size={20} />}
                 value={imageStats?.likes?.total}
+                loading={loading}
               />
             </div>
           </div>
