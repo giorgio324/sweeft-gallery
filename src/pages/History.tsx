@@ -20,16 +20,21 @@ const History = () => {
   };
   return (
     <>
-      {Object.keys(cache).map((key, i) => (
-        <button
-          className="p-4 bg-blue-500 rounded-lg"
-          key={i}
-          onClick={() => changeSearchQuery(key)}
-        >
-          {key}
-        </button>
-      ))}
-      <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="flex justify-center items-center my-4">
+        <h1 className="text-xl">Searched Items</h1>
+      </div>
+      <div className="flex justify-center items-center gap-4 mb-8 flex-wrap">
+        {Object.keys(cache).map((key) => (
+          <button
+            className="px-4 py-2 bg-blue-500 rounded-md cursor-pointer"
+            key={key}
+            onClick={() => changeSearchQuery(key)}
+          >
+            {key}
+          </button>
+        ))}
+      </div>
+      <main className="grid place-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {searchQuery && (
           <>
             <SearchedImages
