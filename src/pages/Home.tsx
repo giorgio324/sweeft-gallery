@@ -2,6 +2,7 @@ import { useState } from "react";
 import PopularImages from "../components/PopularImages";
 import SearchedImages from "../components/SearchedImages";
 import { useInfiniteQueryFetch } from "../hooks/useInfiniteQueryFetch";
+import SearchInput from "../components/SearchInput";
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -24,18 +25,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center my-8">
-        <input
-          type="text"
-          name="search"
-          id="search"
-          value={searchQuery}
-          onChange={handleInputChange}
-          className="p-2 border w-[300px]"
-          placeholder="Search"
-        />
-      </div>
-
+      <SearchInput value={searchQuery} handleInputChange={handleInputChange} />
       <main className="grid place-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
         {searchQuery ? (
           <>
