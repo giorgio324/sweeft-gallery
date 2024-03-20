@@ -14,19 +14,13 @@ const Home = () => {
     page
   );
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setSearchQuery(inputValue);
-    setPage(1);
-  };
-
   const loadMoreImages = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
   return (
     <>
-      <SearchInput value={searchQuery} handleInputChange={handleInputChange} />
+      <SearchInput setSearchQuery={setSearchQuery} />
       {!searchQuery && (
         <div className="flex flex-col justify-center items-center my-4">
           <h2 className="font-semibold text-xl">20 most popular images</h2>

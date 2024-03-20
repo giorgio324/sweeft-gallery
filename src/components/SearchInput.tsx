@@ -1,9 +1,20 @@
+import { useRef } from "react";
+import debounce from "lodash.debounce";
 import { IoIosSearch } from "react-icons/io";
 type SearchInputProps = {
-  value: string;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 };
-const SearchInput = ({ value, handleInputChange }: SearchInputProps) => {
+
+const SearchInput = ({ setSearchQuery }: SearchInputProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const debouncedUpdateState = debounce((inputValue: string) => {
+    setSearchQuery(inputValue.toLowerCase());
+  }, 500);
+
+  const handleChange = () => {
+    const inputValue = inputRef.current?.value || "";
+    debouncedUpdateState(inputValue);
+  };
   return (
     <div className="max-w-[300px] md:max-w-[400px] mx-auto my-8">
       <div className="relative">
@@ -14,8 +25,8 @@ const SearchInput = ({ value, handleInputChange }: SearchInputProps) => {
           type="search"
           id="search"
           name="search"
-          value={value}
-          onChange={handleInputChange}
+          ref={inputRef}
+          onChange={handleChange}
           className="block w-full p-3 ps-12 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Search Images"
         />

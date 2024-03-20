@@ -23,6 +23,7 @@ export const useInfiniteQueryFetch = (
   query: string,
   page: number
 ) => {
+  console.log("fetch was made");
   const [cache, setCache] = useState<{
     [key: string]: { results: ImageType[]; totalPages: number };
   }>(() => {
