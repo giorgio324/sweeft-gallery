@@ -26,7 +26,7 @@ export const useInfiniteQueryFetch = (
   const [cache, setCache] = useState<{
     [key: string]: { results: ImageType[]; totalPages: number };
   }>(() => {
-    const cachedData = localStorage.getItem("imageCache");
+    const cachedData = sessionStorage.getItem("imageCache");
     return cachedData ? JSON.parse(cachedData) : {};
   });
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ export const useInfiniteQueryFetch = (
   const [data, setData] = useState<ImageType[]>([]);
   const [totalPages, setTotalPages] = useState<number>(1);
   useEffect(() => {
-    localStorage.setItem("imageCache", JSON.stringify(cache));
+    sessionStorage.setItem("imageCache", JSON.stringify(cache));
   }, [cache]);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export const useInfiniteQueryFetch = (
                 totalPages: response.data.total_pages,
               },
             }));
-            localStorage.setItem("imageCache", JSON.stringify(cache));
+            sessionStorage.setItem("imageCache", JSON.stringify(cache));
           } else {
             setData((prevImages) => [...prevImages, ...response.data.results]);
           }
